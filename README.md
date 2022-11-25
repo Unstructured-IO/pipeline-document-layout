@@ -3,26 +3,12 @@
 </h3>
 
 <h3 align="center">
-  <p>Pre-Processing Pipeline for Layout detection</p>
+  <p>Pre-Processing Pipeline for Layout Detection</p>
 </h3>
 
 
 The description for the pipeline repository goes here.
 The API is hosted at `https://api.unstructured.io`.
-
-### TODO list after generating repo from cookiecutter template:
-
-- [x] `git init`
-- [x] Update the pipeline name and description in `README.md` (this file)
-- [x] In a fresh Python environment, run `pip install pip-tools`
-- [x] Add any additional requirements you need to `requirements/base.in` and run `make pip-compile`
-- [x] Run `make install`
-- [ ] Create a preprocessing pipeline notebook in pipeline-notebooks relevant to your project. A barebones sample notebook `pipeline-notebooks/pipeline-hello-world.ipynb` is provided for reference
-- [ ] Generate the API with `make generate-api`
-- [ ] Update `README.md` (this file) with examples of using the API and python code.
-- [ ] Add tests in `test_document_layout`
-- [ ] Delete this checklist and commit changes
-- [ ] If needed, install additional dependencies in the `Dockerfile`. Note that the Dockerfile is provided for convenience and is not a hard requirement for local development. If that convenience provides little value to your audience, removal of the Dockerfile is another option.
 
 ## Developer Quick Start
 
@@ -38,25 +24,25 @@ The API is hosted at `https://api.unstructured.io`.
 	`pyenv activate document_layout`
 
 * Run `make install`
+* Run `pip install 'git+https://github.com/facebookresearch/detectron2.git@v0.4#egg=detectron2'`
 * Start a local jupyter notebook server with `make run-jupyter` <br />
 	**OR** <br />
 	just start the fast-API locally with `make run-web-app`
 
 #### Extracting whatever from some type of document
 
-Give a description of making API calls using example `curl` commands, and example JSON responses.
-
 For example:
 ```
 curl -X 'POST' \
-  'http://localhost:8000/document_layout/v0.0.1/hello-world' \
+  'http://localhost:8000/document-layout/v1.0.0/layout' \
   -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
-  -F 'files=@example.pdf' \
-  -F 'some_parameter=something'  | jq -C . | less -R
+  -F 'files=@sample-docs/example.png' -F 'model_type=yolox'| jq -C . | less -R
 ```
 
-It's also nice to show how to call the API function using pure Python.
+Where `files` includes the file to process, `model_type` can be 'default' (or blank) or 'yolox',
+also is possible to use `force_ocr` to auto in order to try text extraction from your file, or
+'true', in which case OCR will be used.
 
 ### Generating Python files from the pipeline notebooks
 

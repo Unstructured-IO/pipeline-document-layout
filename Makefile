@@ -1,7 +1,7 @@
-PIPELINE_FAMILY := document_layout
+PIPELINE_FAMILY := document-layout
 PIPELINE_PACKAGE := document_layout
 PACKAGE_NAME := prepline_${PIPELINE_PACKAGE}
-PIP_VERSION := 22.1.2
+PIP_VERSION := 22.2
 
 .PHONY: help
 help: Makefile
@@ -14,7 +14,7 @@ help: Makefile
 
 ## install-base:                installs minimum requirements to run the API
 .PHONY: install-base
-install-base: install-base-pip-packages
+install-base: install-base-pip-packages install-detectron2
 
 ## install:                     installs all test and dev requirements
 .PHONY: install
@@ -34,7 +34,11 @@ install-dev:
 	pip install -r requirements/dev.txt
 
 .PHONY: install-ci
-install-ci: install-base install-test
+install-ci: install-base install-test install-dev install-detectron2
+
+.PHONY: install-detectron2
+install-detectron2:
+	pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@78d5b4f335005091fe0364ce4775d711ec93566e"
 
 ## pip-compile:                 compiles all base/dev/test requirements
 .PHONY: pip-compile
@@ -48,17 +52,35 @@ pip-compile:
 # Build #
 #########
 
-## docker-build:                builds the docker container for the pipeline
-.PHONY: docker-build
-docker-build:
-	BUILD_TYPE="" PIP_VERSION=${PIP_VERSION} PIPELINE_FAMILY=${PIPELINE_FAMILY} ./scripts/docker-build.sh
-
 ## generate-api:                generates the FastAPI python APIs from notebooks
 .PHONY: generate-api
 generate-api:
 	PYTHONPATH=. unstructured_api_tools convert-pipeline-notebooks \
 		--input-directory ./pipeline-notebooks \
 		--output-directory ./${PACKAGE_NAME}/api
+
+##########
+# Docker #
+##########
+
+# Docker targets are provided for convenience only and are not required in a standard development environment
+
+# Note that the image has notebooks baked in, however the current working directory
+# is mounted under /home/notebook-user/local/ when the image is started with
+# docker-start-api or docker-start-jupyter
+
+.PHONY: docker-build
+docker-build:
+	PIP_VERSION=${PIP_VERSION} PIPELINE_FAMILY=${PIPELINE_FAMILY} PIPELINE_PACKAGE=${PIPELINE_PACKAGE} ./scripts/docker-build.sh
+
+.PHONY: docker-start-api
+docker-start-api:
+	docker run -p 8000:8000 --mount type=bind,source=$(realpath .),target=/home/notebook-user/local -t --rm pipeline-${PIPELINE_FAMILY}-dev:latest python3 -m uvicorn ${PACKAGE_NAME}.api.app:app --host 0.0.0.0 --port 8000
+
+.PHONY: docker-start-jupyter
+docker-start-jupyter:
+	docker run -p 8888:8888 --mount type=bind,source=$(realpath .),target=/home/notebook-user/local -t --rm pipeline-${PIPELINE_FAMILY}-dev:latest jupyter-notebook --port 8888 --ip 0.0.0.0 --no-browser --NotebookApp.token='' --NotebookApp.password=''
+
 
 #########
 # Local #
@@ -90,7 +112,7 @@ check-coverage:
 ## test-integration:            runs integration tests
 .PHONY: test-integration
 test-integration:
-	PYTHONPATH=. pytest test_${PIPELINE_PACKAGE}_integration
+	PYTHONPATH=. pytest test_${PIPELINE_PACKAGE} 
 
 ## api-check:                   verifies auto-generated pipeline APIs match the existing ones
 .PHONY: api-check

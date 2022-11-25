@@ -5,38 +5,54 @@
 
 import os
 from typing import List, Union
-
-from fastapi import status, FastAPI, File, Form, Request, UploadFile
-from slowapi.errors import RateLimitExceeded
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
+from fastapi import status, FastAPI, File, Form, Request, UploadFile, APIRouter
 from fastapi.responses import PlainTextResponse
-
-limiter = Limiter(key_func=get_remote_address)
-app = FastAPI()
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-
-RATE_LIMIT = os.environ.get("PIPELINE_API_RATE_LIMIT", "1/second")
-
-# pipeline-api
-message = "hello world"
-
-
-def pipeline_api(
-    file,
-    file_content_type=None,
-    m_some_parameters=[],
-):
-    return f"{message}: {' '.join(m_some_parameters)}"
-
-
 import json
 from fastapi.responses import StreamingResponse
 from starlette.types import Send
 from base64 import b64encode
 from typing import Optional, Mapping, Iterator, Tuple
 import secrets
+from unstructured_inference.inference.layout import process_data_with_model
+from unstructured_inference.models.base import UnknownModelException
+from fastapi import HTTPException
+
+
+app = FastAPI()
+router = APIRouter()
+
+
+# pipeline-api
+VALID_FILETYPES = ["application/pdf", "image/png"]
+
+
+def pipeline_api(
+    file,
+    file_content_type=None,
+    m_model_type=[],
+    m_force_ocr=[],
+):
+    if file_content_type not in VALID_FILETYPES:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
+
+    is_image = file_content_type == "image/png"
+    model = None if m_model_type == [] else m_model_type[0]
+    ocr_strategy = "force" if m_force_ocr else "auto"
+    try:
+        layout = process_data_with_model(
+            file, model, is_image, ocr_strategy=ocr_strategy
+        )  # type: ignore
+    except UnknownModelException as e:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(e))
+    pages_layout = [
+        {
+            "number": page.number,
+            "elements": [element.to_dict() for element in page.elements],
+        }
+        for page in layout.pages
+    ]
+
+    return {"pages": pages_layout}
 
 
 class MultipartMixedResponse(StreamingResponse):
@@ -97,18 +113,22 @@ class MultipartMixedResponse(StreamingResponse):
         await send({"type": "http.response.body", "body": b"", "more_body": False})
 
 
-@app.post("/document_layout/v0.0.1/hello-world")
-@limiter.limit(RATE_LIMIT)
+@router.post("/document-layout/v1.0.0/layout")
 async def pipeline_1(
     request: Request,
     files: Union[List[UploadFile], None] = File(default=None),
-    some_parameters: List[str] = Form(default=[]),
+    model_type: List[str] = Form(default=[]),
+    force_ocr: List[str] = Form(default=[]),
 ):
     content_type = request.headers.get("Accept")
 
     if isinstance(files, list) and len(files):
         if len(files) > 1:
-            if content_type and content_type not in ["*/*", "multipart/mixed"]:
+            if content_type and content_type not in [
+                "*/*",
+                "multipart/mixed",
+                "application/json",
+            ]:
                 return PlainTextResponse(
                     content=(
                         f"Conflict in media type {content_type}"
@@ -117,23 +137,28 @@ async def pipeline_1(
                     status_code=status.HTTP_406_NOT_ACCEPTABLE,
                 )
 
-            def response_generator():
+            def response_generator(is_multipart):
                 for file in files:
 
                     _file = file.file
 
                     response = pipeline_api(
                         _file,
-                        m_some_parameters=some_parameters,
+                        m_model_type=model_type,
+                        m_force_ocr=force_ocr,
                         file_content_type=file.content_type,
                     )
-                    if type(response) not in [str, bytes]:
-                        response = json.dumps(response)
+                    if is_multipart:
+                        if type(response) not in [str, bytes]:
+                            response = json.dumps(response)
                     yield response
 
-            return MultipartMixedResponse(
-                response_generator(),
-            )
+            if content_type == "multipart/mixed":
+                return MultipartMixedResponse(
+                    response_generator(is_multipart=True),
+                )
+            else:
+                return response_generator(is_multipart=False)
         else:
 
             file = files[0]
@@ -141,7 +166,8 @@ async def pipeline_1(
 
             response = pipeline_api(
                 _file,
-                m_some_parameters=some_parameters,
+                m_model_type=model_type,
+                m_force_ocr=force_ocr,
                 file_content_type=file.content_type,
             )
 
@@ -157,3 +183,6 @@ async def pipeline_1(
 @app.get("/healthcheck", status_code=status.HTTP_200_OK)
 async def healthcheck(request: Request):
     return {"healthcheck": "HEALTHCHECK STATUS: EVERYTHING OK!"}
+
+
+app.include_router(router)
