@@ -32,6 +32,7 @@ def pipeline_api(
 ):
     from layoutparser.models import Detectron2LayoutModel
     from PIL import Image
+    from pdf2image import convert_from_bytes
 
     model = Detectron2LayoutModel(
         config_path="lp://PubLayNet/faster_rcnn_R_50_FPN_3x/config",  # In model catalog
@@ -44,9 +45,17 @@ def pipeline_api(
         },  # In model`label_map`
         extra_config=["MODEL.ROI_HEADS.SCORE_THRESH_TEST", 0.8],  # Optional
     )
-    img = Image.open(file)
-    detections = model.detect(img)
-    return detections
+
+    if file_content_type == "image/png":
+        img = Image.open(file)
+        detections = model.detect(img)
+    if file_content_type == "application/pdf":
+        pages = convert_from_bytes(file.read(), 500)
+        results = []
+        for page in pages:
+            detections = model.detect(page)
+            results.append(detections)
+        return results
 
 
 import json
