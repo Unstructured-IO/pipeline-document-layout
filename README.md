@@ -17,9 +17,9 @@ The API is hosted at `https://api.unstructured.io`.
 - [x] In a fresh Python environment, run `pip install pip-tools`
 - [x] Add any additional requirements you need to `requirements/base.in` and run `make pip-compile`
 - [x] Run `make install`
-- [ ] Create a preprocessing pipeline notebook in pipeline-notebooks relevant to your project. A barebones sample notebook `pipeline-notebooks/pipeline-hello-world.ipynb` is provided for reference
-- [ ] Generate the API with `make generate-api`
-- [ ] Update `README.md` (this file) with examples of using the API and python code.
+- [-] Create a preprocessing pipeline notebook in pipeline-notebooks relevant to your project. A barebones sample notebook `pipeline-notebooks/pipeline-hello-world.ipynb` is provided for reference
+- [-] Generate the API with `make generate-api`
+- [-] Update `README.md` (this file) with examples of using the API and python code.
 - [ ] Add tests in `test_document_layout`
 - [ ] Delete this checklist and commit changes
 - [ ] If needed, install additional dependencies in the `Dockerfile`. Note that the Dockerfile is provided for convenience and is not a hard requirement for local development. If that convenience provides little value to your audience, removal of the Dockerfile is another option.
@@ -38,6 +38,7 @@ The API is hosted at `https://api.unstructured.io`.
 	`pyenv activate document_layout`
 
 * Run `make install`
+* Run `pip install 'git+https://github.com/facebookresearch/detectron2.git@v0.4#egg=detectron2'`
 * Start a local jupyter notebook server with `make run-jupyter` <br />
 	**OR** <br />
 	just start the fast-API locally with `make run-web-app`
@@ -49,10 +50,10 @@ Give a description of making API calls using example `curl` commands, and exampl
 For example:
 ```
 curl -X 'POST' \
-  'http://localhost:8000/document_layout/v0.0.1/hello-world' \
+  'http://localhost:8000/document-layout/v0.0.1/hello-world' \
   -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
-  -F 'files=@example.pdf' \
+  -F 'files=@example.png' \
   -F 'some_parameter=something'  | jq -C . | less -R
 ```
 
