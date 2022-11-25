@@ -6,7 +6,7 @@
 import os
 from typing import List, Union
 
-from fastapi import status, FastAPI, File, Form, Request, UploadFile
+from fastapi import status, FastAPI, File, Form, Request, UploadFile, APIRouter
 from slowapi.errors import RateLimitExceeded
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -16,11 +16,15 @@ limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+router = APIRouter()
 
 RATE_LIMIT = os.environ.get("PIPELINE_API_RATE_LIMIT", "1/second")
 
+
 # pipeline-api
-message = "hello world"
+from layoutparser.models import Detectron2LayoutModel
+from PIL import Image
+from pdf2image import convert_from_bytes
 
 
 def pipeline_api(
@@ -28,7 +32,29 @@ def pipeline_api(
     file_content_type=None,
     m_some_parameters=[],
 ):
-    return f"{message}: {' '.join(m_some_parameters)}"
+
+    model = Detectron2LayoutModel(
+        config_path="lp://PubLayNet/faster_rcnn_R_50_FPN_3x/config",  # In model catalog
+        label_map={
+            0: "Text",
+            1: "Title",
+            2: "List",
+            3: "Table",
+            4: "Figure",
+        },  # In model`label_map`
+        extra_config=["MODEL.ROI_HEADS.SCORE_THRESH_TEST", 0.8],  # Optional
+    )
+
+    if file_content_type == "image/png":
+        img = Image.open(file)
+        return model.detect(img).to_dict()
+    if file_content_type == "application/pdf":
+        pages = convert_from_bytes(file.read(), dpi=500)
+        results = []
+        for page in pages:
+            detections = model.detect(page).to_dict()
+            results.append(detections)
+        return results
 
 
 import json
@@ -97,7 +123,7 @@ class MultipartMixedResponse(StreamingResponse):
         await send({"type": "http.response.body", "body": b"", "more_body": False})
 
 
-@app.post("/document_layout/v0.0.1/hello-world")
+@router.post("/document-layout/v0.0.1/layout")
 @limiter.limit(RATE_LIMIT)
 async def pipeline_1(
     request: Request,
@@ -157,3 +183,6 @@ async def pipeline_1(
 @app.get("/healthcheck", status_code=status.HTTP_200_OK)
 async def healthcheck(request: Request):
     return {"healthcheck": "HEALTHCHECK STATUS: EVERYTHING OK!"}
+
+
+app.include_router(router)

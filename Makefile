@@ -14,7 +14,7 @@ help: Makefile
 
 ## install-base:                installs minimum requirements to run the API
 .PHONY: install-base
-install-base: install-base-pip-packages
+install-base: install-base-pip-packages install-detectron2
 
 ## install:                     installs all test and dev requirements
 .PHONY: install
@@ -34,7 +34,11 @@ install-dev:
 	pip install -r requirements/dev.txt
 
 .PHONY: install-ci
-install-ci: install-base install-test
+install-ci: install-base install-test install-detectron2
+
+.PHONY: install-detectron2
+install-detectron2:
+	pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.6#egg=detectron2"
 
 ## pip-compile:                 compiles all base/dev/test requirements
 .PHONY: pip-compile
@@ -90,7 +94,7 @@ check-coverage:
 ## test-integration:            runs integration tests
 .PHONY: test-integration
 test-integration:
-	PYTHONPATH=. pytest test_${PIPELINE_PACKAGE}_integration
+	PYTHONPATH=. pytest test_${PIPELINE_PACKAGE} 
 
 ## api-check:                   verifies auto-generated pipeline APIs match the existing ones
 .PHONY: api-check

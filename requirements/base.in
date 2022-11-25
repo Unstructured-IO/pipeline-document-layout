@@ -3,5 +3,5 @@ unstructured-api-tools>=0.4.4
 layoutparser>=0.3.4
 torch==1.13.0
 torchvision==0.14.0
+pdf2image==1.16.0
 ratelimit
-#pip install 'git+https://github.com/facebookresearch/detectron2.git@v0.4#egg=detectron2' 
