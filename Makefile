@@ -90,7 +90,7 @@ check-coverage:
 ## test-integration:            runs integration tests
 .PHONY: test-integration
 test-integration:
-	PYTHONPATH=. pytest test_${PIPELINE_PACKAGE}_integration
+	PYTHONPATH=. pytest test_${PIPELINE_PACKAGE} 
 
 ## api-check:                   verifies auto-generated pipeline APIs match the existing ones
 .PHONY: api-check
