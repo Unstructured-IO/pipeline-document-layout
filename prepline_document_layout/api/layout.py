@@ -48,7 +48,7 @@ def pipeline_api(
 
     if file_content_type == "image/png":
         img = Image.open(file)
-        detections = model.detect(img)
+        return model.detect(img)
     if file_content_type == "application/pdf":
         pages = convert_from_bytes(file.read(), 500)
         results = []
