@@ -10,7 +10,6 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
-from .hello_world import router as hello_world_router
 from .layout import router as layout_router
 
 
@@ -19,7 +18,6 @@ app = FastAPI()
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-app.include_router(hello_world_router)
 app.include_router(layout_router)
 
 

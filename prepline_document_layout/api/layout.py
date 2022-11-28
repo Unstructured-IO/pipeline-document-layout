@@ -22,7 +22,9 @@ RATE_LIMIT = os.environ.get("PIPELINE_API_RATE_LIMIT", "1/second")
 
 
 # pipeline-api
-message = "hello world"
+from layoutparser.models import Detectron2LayoutModel
+from PIL import Image
+from pdf2image import convert_from_bytes
 
 
 def pipeline_api(
@@ -30,9 +32,6 @@ def pipeline_api(
     file_content_type=None,
     m_some_parameters=[],
 ):
-    from layoutparser.models import Detectron2LayoutModel
-    from PIL import Image
-    from pdf2image import convert_from_bytes
 
     model = Detectron2LayoutModel(
         config_path="lp://PubLayNet/faster_rcnn_R_50_FPN_3x/config",  # In model catalog

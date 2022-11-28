@@ -11,6 +11,7 @@ SAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "sample-docs")
 
 LAYOUT_ROUTE = get_pipeline_path("layout", pipeline_family="document-layout", semver="0.0.1")
 
+
 def test_layout_pdf():
     filename = "../pipeline-document-layout/sample-docs/example.pdf"
     app.state.limiter.reset()
@@ -25,6 +26,7 @@ def test_layout_pdf():
 
     assert response.status_code == 200
 
+
 def test_layout_multipage_pdf():
     filename = "../pipeline-document-layout/sample-docs/example-multipage.pdf"
     app.state.limiter.reset()
@@ -38,6 +40,7 @@ def test_layout_multipage_pdf():
     )
 
     assert response.status_code == 200
+
 
 def test_layout_image():
     filename = "../pipeline-document-layout/sample-docs/example.png"
