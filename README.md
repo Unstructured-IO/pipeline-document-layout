@@ -3,26 +3,12 @@
 </h3>
 
 <h3 align="center">
-  <p>Pre-Processing Pipeline for Layout detection</p>
+  <p>Pre-Processing Pipeline for Layout Detection</p>
 </h3>
 
 
 The description for the pipeline repository goes here.
 The API is hosted at `https://api.unstructured.io`.
-
-### TODO list after generating repo from cookiecutter template:
-
-- [x] `git init`
-- [x] Update the pipeline name and description in `README.md` (this file)
-- [x] In a fresh Python environment, run `pip install pip-tools`
-- [x] Add any additional requirements you need to `requirements/base.in` and run `make pip-compile`
-- [x] Run `make install`
-- [-] Create a preprocessing pipeline notebook in pipeline-notebooks relevant to your project. A barebones sample notebook `pipeline-notebooks/pipeline-hello-world.ipynb` is provided for reference
-- [-] Generate the API with `make generate-api`
-- [-] Update `README.md` (this file) with examples of using the API and python code.
-- [ ] Add tests in `test_document_layout`
-- [ ] Delete this checklist and commit changes
-- [ ] If needed, install additional dependencies in the `Dockerfile`. Note that the Dockerfile is provided for convenience and is not a hard requirement for local development. If that convenience provides little value to your audience, removal of the Dockerfile is another option.
 
 ## Developer Quick Start
 
@@ -50,11 +36,10 @@ Give a description of making API calls using example `curl` commands, and exampl
 For example:
 ```
 curl -X 'POST' \
-  'http://localhost:8000/document-layout/v0.0.1/hello-world' \
+  'http://localhost:8000/document-layout/v0.0.1/layout' \
   -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
-  -F 'files=@example.png' \
-  -F 'some_parameter=something'  | jq -C . | less -R
+  -F 'files=@sample-docs/example.png' | jq -C . | less -R
 ```
 
 It's also nice to show how to call the API function using pure Python.
