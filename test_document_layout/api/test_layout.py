@@ -55,3 +55,41 @@ def test_layout_image():
     )
 
     assert response.status_code == 200
+
+
+def test_healtcheck():
+    app.state.limiter.reset()
+    client = TestClient(app)
+    response = client.get("/healthcheck")
+    assert "HEALTHCHECK STATUS: EVERYTHING OK!" in response.content.decode()
+    assert response.status_code == 200
+
+
+def test_multiple_files_type_content():
+    filename = "../pipeline-document-layout/sample-docs/example.png"
+    app.state.limiter.reset()
+    client = TestClient(app)
+
+    response = client.post(
+        LAYOUT_ROUTE,
+        files=[
+            ("files", (filename, open(filename, "rb"), "image/png")),
+            ("files", (filename, open(filename, "rb"), "image/png")),
+        ],
+    )
+    assert response.status_code == 200
+
+
+def test_multiple_files_pdf():
+    filename = "../pipeline-document-layout/sample-docs/example.pdf"
+    app.state.limiter.reset()
+    client = TestClient(app)
+
+    response = client.post(
+        LAYOUT_ROUTE,
+        files=[
+            ("files", (filename, open(filename, "rb"), "application/pdf")),
+            ("files", (filename, open(filename, "rb"), "application/pdf")),
+        ],
+    )
+    assert response.status_code == 200
