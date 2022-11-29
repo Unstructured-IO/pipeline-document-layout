@@ -47,12 +47,12 @@ def pipeline_api(
 
     if file_content_type == "image/png":
         img = Image.open(file)
-        return model.detect(img)
+        return model.detect(img).to_dict()
     if file_content_type == "application/pdf":
-        pages = convert_from_bytes(file.read(), 500)
+        pages = convert_from_bytes(file.read(), dpi=500)
         results = []
         for page in pages:
-            detections = model.detect(page)
+            detections = model.detect(page).to_dict()
             results.append(detections)
         return results
 
