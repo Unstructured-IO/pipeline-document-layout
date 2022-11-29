@@ -22,6 +22,9 @@ RATE_LIMIT = os.environ.get("PIPELINE_API_RATE_LIMIT", "1/second")
 
 
 # pipeline-api
+from layoutparser.models import Detectron2LayoutModel
+from PIL import Image
+from pdf2image import convert_from_bytes
 
 
 def pipeline_api(
@@ -29,9 +32,6 @@ def pipeline_api(
     file_content_type=None,
     m_some_parameters=[],
 ):
-    from layoutparser.models import Detectron2LayoutModel
-    from PIL import Image
-    from pdf2image import convert_from_bytes
 
     model = Detectron2LayoutModel(
         config_path="lp://PubLayNet/faster_rcnn_R_50_FPN_3x/config",  # In model catalog
@@ -63,32 +63,31 @@ from starlette.types import Send
 from base64 import b64encode
 from typing import Optional, Mapping, Iterator, Tuple
 import secrets
-import pytest
-import sys
-@pytest.mark.skip(reason="does not run on windows")
+
+
 class MultipartMixedResponse(StreamingResponse):
     CRLF = b"\r\n"
-    @pytest.mark.skip(reason="does not run on windows")
+
     def __init__(self, *args, content_type: str = None, **kwargs):
         super().__init__(*args, **kwargs)
         self.content_type = content_type
-    @pytest.mark.skip(reason="does not run on windows")
+
     def init_headers(self, headers: Optional[Mapping[str, str]] = None) -> None:
         super().init_headers(headers)
         self.boundary_value = secrets.token_hex(16)
         content_type = f'multipart/mixed; boundary="{self.boundary_value}"'
         self.raw_headers.append((b"content-type", content_type.encode("latin-1")))
-    @pytest.mark.skip(reason="does not run on windows")
+
     @property
     def boundary(self):
         return b"--" + self.boundary_value.encode()
-    @pytest.mark.skip(reason="does not run on windows")
+
     def _build_part_headers(self, headers: dict) -> bytes:
         header_bytes = b""
         for header, value in headers.items():
             header_bytes += f"{header}: {value}".encode() + self.CRLF
         return header_bytes
-    @pytest.mark.skip(reason="does not run on windows")
+
     def build_part(self, chunk: bytes) -> bytes:
         part = self.boundary + self.CRLF
         part_headers = {
@@ -100,7 +99,7 @@ class MultipartMixedResponse(StreamingResponse):
         part += self._build_part_headers(part_headers)
         part += self.CRLF + chunk + self.CRLF
         return part
-    @pytest.mark.skip(reason="does not run on windows")
+
     async def stream_response(self, send: Send) -> None:
         await send(
             {
