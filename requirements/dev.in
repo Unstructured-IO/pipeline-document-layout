@@ -4,5 +4,6 @@ jupyter
 mypy
 nbdev
 pip-tools
+nbdev
 # NOTE(crag): consistency with unstructured-api-tools. pinned for a reason, see there.
 ipython==8.6.0
