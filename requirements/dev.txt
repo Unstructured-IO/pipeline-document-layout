@@ -58,13 +58,9 @@ fastcore==1.5.27
 fastjsonschema==2.16.2
     # via nbformat
 flake8==5.0.4
-    # via -r requirements/dev.in
+    # via -r dev.in
 ghapi==1.0.3
     # via nbdev
-importlib-metadata==5.0.0
-    # via nbconvert
-importlib-resources==5.10.0
-    # via jsonschema
 ipykernel==6.15.3
     # via
     #   ipywidgets
@@ -74,7 +70,7 @@ ipykernel==6.15.3
     #   qtconsole
 ipython==8.6.0
     # via
-    #   -r requirements/dev.in
+    #   -r dev.in
     #   execnb
     #   ipykernel
     #   ipywidgets
@@ -94,7 +90,7 @@ jinja2==3.1.2
 jsonschema==4.16.0
     # via nbformat
 jupyter==1.0.0
-    # via -r requirements/dev.in
+    # via -r dev.in
 jupyter-client==7.3.5
     # via
     #   ipykernel
@@ -130,7 +126,7 @@ mccabe==0.7.0
 mistune==2.0.4
     # via nbconvert
 mypy==0.991
-    # via -r requirements/dev.in
+    # via -r dev.in
 mypy-extensions==0.4.3
     # via
     #   black
@@ -142,7 +138,7 @@ nbconvert==7.0.0
     #   jupyter
     #   notebook
 nbdev==2.3.9
-    # via -r requirements/dev.in
+    # via -r dev.in
 nbformat==5.6.0
     # via
     #   nbclient
@@ -284,10 +280,6 @@ wheel==0.37.1
     #   pip-tools
 widgetsnbextension==4.0.3
     # via ipywidgets
-zipp==3.10.0
-    # via
-    #   importlib-metadata
-    #   importlib-resources
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
