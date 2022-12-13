@@ -34,7 +34,7 @@ install-dev:
 	pip install -r requirements/dev.txt
 
 .PHONY: install-ci
-install-ci: install-base install-test install-detectron2
+install-ci: install-base install-test install-dev install-detectron2
 
 .PHONY: install-detectron2
 install-detectron2:
