@@ -34,11 +34,11 @@ install-dev:
 	pip install -r requirements/dev.txt
 
 .PHONY: install-ci
-install-ci: install-base install-test install-detectron2
+install-ci: install-base install-test install-dev install-detectron2
 
 .PHONY: install-detectron2
 install-detectron2:
-	pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@v0.6#egg=detectron2"
+	pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@78d5b4f335005091fe0364ce4775d711ec93566e"
 
 ## pip-compile:                 compiles all base/dev/test requirements
 .PHONY: pip-compile
