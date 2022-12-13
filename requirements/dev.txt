@@ -84,7 +84,7 @@ ipykernel==6.19.2
     #   qtconsole
 ipython==8.7.0
     # via
-    #   -r dev.in
+    #   -r requirements/dev.in
     #   execnb
     #   ipykernel
     #   ipywidgets
@@ -160,7 +160,7 @@ mccabe==0.7.0
 mistune==2.0.4
     # via nbconvert
 mypy==0.991
-    # via -r dev.in
+    # via -r requirements/dev.in
 mypy-extensions==0.4.3
     # via mypy
 nbclassic==0.4.8
