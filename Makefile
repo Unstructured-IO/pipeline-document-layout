@@ -1,4 +1,4 @@
-PIPELINE_FAMILY := document_layout
+PIPELINE_FAMILY := document-layout
 PIPELINE_PACKAGE := document_layout
 PACKAGE_NAME := prepline_${PIPELINE_PACKAGE}
 PIP_VERSION := 22.1.2
