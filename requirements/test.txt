@@ -37,7 +37,7 @@ ghapi==1.0.3
     # via nbdev
 iniconfig==1.1.1
     # via pytest
-ipython==8.7.0
+ipython==8.8.0
     # via execnb
 jedi==0.18.2
     # via ipython
