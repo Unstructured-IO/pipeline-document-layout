@@ -122,6 +122,16 @@ numpy==1.23.5
     #   pandas
     #   scipy
     #   torchvision
+nvidia-cublas-cu11==11.10.3.66
+    # via
+    #   nvidia-cudnn-cu11
+    #   torch
+nvidia-cuda-nvrtc-cu11==11.7.99
+    # via torch
+nvidia-cuda-runtime-cu11==11.7.99
+    # via torch
+nvidia-cudnn-cu11==8.5.0.96
+    # via torch
 opencv-python==4.6.0.66
     # via layoutparser
 packaging==22.0
@@ -214,11 +224,11 @@ tomli==2.0.1
     #   build
     #   mypy
     #   pep517
-torch==1.13.0
+torch==1.13.1
     # via
     #   -r requirements/base.in
     #   torchvision
-torchvision==0.14.0
+torchvision==0.14.1
     # via -r requirements/base.in
 tornado==6.2
     # via jupyter-client
@@ -268,7 +278,10 @@ webencodings==0.5.1
 websockets==10.4
     # via uvicorn
 wheel==0.38.4
-    # via pip-tools
+    # via
+    #   nvidia-cublas-cu11
+    #   nvidia-cuda-runtime-cu11
+    #   pip-tools
 wrapt==1.14.1
     # via deprecated
 zipp==3.11.0
