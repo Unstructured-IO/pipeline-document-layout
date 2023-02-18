@@ -23,6 +23,7 @@ install: install-base install-test install-dev
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
 	python3 -m pip install pip==${PIP_VERSION}
+	python3 -m pip install pip-tools
 	pip install -r requirements/base.txt
 
 .PHONY: install-test
