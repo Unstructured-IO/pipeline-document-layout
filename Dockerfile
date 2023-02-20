@@ -10,17 +10,21 @@ ARG PIP_VERSION
 ARG PIPELINE_PACKAGE
 
 RUN yum -y update
-RUN yum -y install gcc openssl-devel bzip2 bzip2-devel libffi-devel make git sqlite-devel mesa-libGL xz-devel perl wget poppler-utils zlib-devel which
-RUN yum -y install centos-release-scl
+RUN yum -y install gcc openssl-devel bzip2 bzip2-devel libffi-devel make git sqlite-devel \
+    mesa-libGL xz-devel perl wget poppler-utils zlib-devel which centos-release-scl
 RUN yum -y install devtoolset-7-gcc*
 SHELL [ "/usr/bin/scl", "enable", "devtoolset-7"]
-RUN wget https://www.python.org/ftp/python/3.8.16/Python-3.8.16.tgz
-RUN tar -xzf Python-3.8.16.tgz
+RUN wget https://www.python.org/ftp/python/3.8.16/Python-3.8.16.tgz && \
+    tar -xzf Python-3.8.16.tgz
 
-RUN cd Python-3.8.16 && mkdir ~/.localpython && ./configure --enable-optimizations --prefix=/root/.localpython 
-RUN cd Python-3.8.16 && make -j 6 altinstall
-RUN /root/.localpython/bin/python3.8 -m pip install --upgrade pip
-RUN export PATH=/root/.localpython/bin:$PATH && export LD_LIBRARY_PATH=/root/openssl/lib &&export LDFLAGS="-L /root/openssl/lib -Wl,-rpath,/root/openssl/lib" && . ~/.bashrc
+RUN cd Python-3.8.16 && mkdir ~/.localpython && \
+    ./configure --enable-optimizations --prefix=/root/.localpython && \
+    make -j 6 altinstall
+#RUN /root/.localpython/bin/python3.8 -m pip install --upgrade pip
+RUN export PATH=/root/.localpython/bin:$PATH && \
+    export LD_LIBRARY_PATH=/root/openssl/lib && \
+    export LDFLAGS="-L /root/openssl/lib -Wl,-rpath,/root/openssl/lib" && \
+    . ~/.bashrc
 
 # create user with a home directory
 ENV USER ${NB_USER}
@@ -36,11 +40,9 @@ RUN useradd --uid ${NB_UID}  --gid ${NB_UID} ${NB_USER}
 COPY requirements/dev.txt requirements-dev.txt
 COPY requirements/base.txt requirements-base.txt
 COPY prepline_document_layout prepline_document_layout
-COPY exploration-notebooks exploration-notebooks
 COPY pipeline-notebooks pipeline-notebooks
-COPY sample-docs sample-docs
 
-RUN pip3.8 install --no-cache -r requirements-base.txt 
+RUN pip3.8 install --no-cache -r requirements-base.txt
 RUN pip3.8 install --no-cache -r requirements-dev.txt 
 RUN pip3.8 install ninja
 
