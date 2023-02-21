@@ -17,35 +17,30 @@ SHELL [ "/usr/bin/scl", "enable", "devtoolset-7"]
 RUN wget https://www.python.org/ftp/python/3.8.16/Python-3.8.16.tgz && \
     tar -xzf Python-3.8.16.tgz
 
-RUN cd Python-3.8.16 && mkdir ~/.localpython && \
-    ./configure --enable-optimizations --prefix=/root/.localpython && \
-    make -j 6 altinstall
-#RUN /root/.localpython/bin/python3.8 -m pip install --upgrade pip
-RUN export PATH=/root/.localpython/bin:$PATH && \
-    export LD_LIBRARY_PATH=/root/openssl/lib && \
-    export LDFLAGS="-L /root/openssl/lib -Wl,-rpath,/root/openssl/lib" && \
-    . ~/.bashrc
+RUN cd Python-3.8.16 && \
+    ./configure --enable-optimizations && \
+    make -j 6 altinstall && cd .. && rm -rf Python-3*
+
+RUN ln -s /usr/local/bin/python3.8 /usr/local/bin/python3
+RUN export PATH=/usr/local/bin:$PATH 
 
 # create user with a home directory
 ENV USER ${NB_USER}
-ENV HOME /root
-#/home/${NB_USER}
-ENV PATH $HOME/openssl/bin:$HOME/.localpython/bin:$PATH
-ENV LD_LIBRARY_PATH $HOME/openssl/lib 
-ENV LDFLAGS "-L /root/openssl/lib -Wl,-rpath,/root/openssl/lib"
+ENV HOME /home/${NB_USER}
+ENV PATH $HOME/usr/local/bin/:$PATH
 
 RUN groupadd --gid ${NB_UID} ${NB_USER}
 RUN useradd --uid ${NB_UID}  --gid ${NB_UID} ${NB_USER}
-#USER ${NB_USER}
+USER ${NB_USER}
 COPY requirements/dev.txt requirements-dev.txt
 COPY requirements/base.txt requirements-base.txt
 COPY prepline_document_layout prepline_document_layout
 COPY pipeline-notebooks pipeline-notebooks
 
-RUN pip3.8 install --no-cache -r requirements-base.txt
-RUN pip3.8 install --no-cache -r requirements-dev.txt 
-RUN pip3.8 install ninja
+RUN python3 -m pip install --no-cache -r requirements-base.txt
+RUN python3 -m pip install --no-cache -r requirements-dev.txt 
+RUN python3 -m pip install ninja
 
-RUN pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@78d5b4f335005091fe0364ce4775d711ec93566e"
+RUN python3 -m pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@78d5b4f335005091fe0364ce4775d711ec93566e"
 EXPOSE 8000
-CMD [ "uvicorn","prepline_document_layout.api.app:app" ]
+#CMD [ "python3","-m","uvicorn","prepline_document_layout.api.app:app","--host","0.0.0.0"]

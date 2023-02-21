@@ -76,11 +76,11 @@ docker-build:
 
 .PHONY: docker-start-api
 docker-start-api:
-	docker run -p 8000:8000 --mount type=bind,source=$(realpath .),target=/home/notebook-user/local -t --rm pipeline-${PIPELINE_FAMILY}-dev:latest uvicorn ${PACKAGE_NAME}.api.app:app --host 0.0.0.0 --port 8000
+	docker run -p 8000:8000 --mount type=bind,source=$(realpath .),target=/home/notebook-user/local -t --rm pipeline-${PIPELINE_FAMILY}-dev:latest python3 -m uvicorn ${PACKAGE_NAME}.api.app:app --host 0.0.0.0 --port 8000
 
 .PHONY: docker-start-jupyter
 docker-start-jupyter:
-	docker run -p 8888:8888 --mount type=bind,source=$(realpath .),target=/home/notebook-user/local -t --rm pipeline-family-${PIPELINE_FAMILY}-dev:latest jupyter-notebook --port 8888 --ip 0.0.0.0 --no-browser --NotebookApp.token='' --NotebookApp.password=''
+	docker run -p 8888:8888 --mount type=bind,source=$(realpath .),target=/home/notebook-user/local -t --rm pipeline-${PIPELINE_FAMILY}-dev:latest python3 -m jupyter --port 8888 --ip 0.0.0.0 --no-browser --NotebookApp.token='' --NotebookApp.password=''
 
 
 #########
