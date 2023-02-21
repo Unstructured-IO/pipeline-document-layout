@@ -1,5 +1,6 @@
-unstructured>=0.2.4
+unstructured>=0.4.11
 unstructured-api-tools>=0.4.4
+unstructured-inference>=0.2.7
 layoutparser>=0.3.4
 torch>=1.13.1
 torchvision>0.14.0

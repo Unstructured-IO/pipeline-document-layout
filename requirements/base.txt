@@ -4,6 +4,8 @@
 #
 #    pip-compile requirements/base.in
 #
+antlr4-python3-runtime==4.9.3
+    # via omegaconf
 anyio==3.6.2
     # via
     #   httpcore
@@ -34,18 +36,36 @@ click==8.1.3
     #   pip-tools
     #   unstructured-api-tools
     #   uvicorn
+coloredlogs==15.0.1
+    # via onnxruntime
+contourpy==1.0.7
+    # via matplotlib
 cryptography==38.0.4
     # via pdfminer-six
+cycler==0.11.0
+    # via matplotlib
 defusedxml==0.7.1
     # via nbconvert
 deprecated==1.2.13
     # via limits
+effdet==0.3.0
+    # via layoutparser
 entrypoints==0.4
     # via jupyter-client
 fastapi==0.88.0
-    # via unstructured-api-tools
+    # via
+    #   unstructured-api-tools
+    #   unstructured-inference
 fastjsonschema==2.16.2
     # via nbformat
+filelock==3.9.0
+    # via
+    #   huggingface-hub
+    #   transformers
+flatbuffers==23.1.21
+    # via onnxruntime
+fonttools==4.38.0
+    # via matplotlib
 h11==0.14.0
     # via
     #   httpcore
@@ -56,6 +76,13 @@ httptools==0.5.0
     # via uvicorn
 httpx==0.23.1
     # via -r requirements/base.in
+huggingface-hub==0.12.0
+    # via
+    #   timm
+    #   transformers
+    #   unstructured-inference
+humanfriendly==10.0
+    # via coloredlogs
 idna==3.4
     # via
     #   anyio
@@ -64,7 +91,9 @@ idna==3.4
 importlib-metadata==5.1.0
     # via nbconvert
 importlib-resources==5.10.1
-    # via jsonschema
+    # via
+    #   jsonschema
+    #   matplotlib
 iopath==0.1.7
     # via
     #   -r requirements/base.in
@@ -75,6 +104,8 @@ jinja2==3.1.2
     #   unstructured-api-tools
 joblib==1.2.0
     # via nltk
+jsons==1.6.3
+    # via unstructured-inference
 jsonschema==4.17.3
     # via nbformat
 jupyter-client==7.4.8
@@ -87,8 +118,12 @@ jupyter-core==5.1.0
     #   nbformat
 jupyterlab-pygments==0.2.2
     # via nbconvert
-layoutparser==0.3.4
-    # via -r requirements/base.in
+kiwisolver==1.4.4
+    # via matplotlib
+layoutparser[layoutmodels,tesseract]==0.3.4
+    # via
+    #   -r requirements/base.in
+    #   unstructured-inference
 limits==2.7.2
     # via slowapi
 lxml==4.9.1
@@ -97,8 +132,12 @@ markupsafe==2.1.1
     # via
     #   jinja2
     #   nbconvert
+matplotlib==3.7.0
+    # via pycocotools
 mistune==2.0.4
     # via nbconvert
+mpmath==1.2.1
+    # via sympy
 mypy==0.991
     # via unstructured-api-tools
 mypy-extensions==0.4.3
@@ -117,18 +156,34 @@ nltk==3.8
     # via unstructured
 numpy==1.23.5
     # via
+    #   contourpy
     #   layoutparser
+    #   matplotlib
+    #   onnxruntime
     #   opencv-python
     #   pandas
+    #   pycocotools
     #   scipy
     #   torchvision
+    #   transformers
+omegaconf==2.3.0
+    # via effdet
+onnxruntime==1.13.1
+    # via unstructured-inference
 opencv-python==4.6.0.66
-    # via layoutparser
+    # via
+    #   layoutparser
+    #   unstructured-inference
 packaging==22.0
     # via
     #   build
+    #   huggingface-hub
     #   limits
+    #   matplotlib
     #   nbconvert
+    #   onnxruntime
+    #   pytesseract
+    #   transformers
 pandas==1.5.2
     # via layoutparser
 pandocfilters==1.5.0
@@ -146,8 +201,10 @@ pep517==0.13.0
 pillow==9.3.0
     # via
     #   layoutparser
+    #   matplotlib
     #   pdf2image
     #   pdfplumber
+    #   pytesseract
     #   torchvision
 pip-tools==6.11.0
     # via -r requirements/base.in
@@ -157,36 +214,56 @@ platformdirs==2.6.0
     # via jupyter-core
 portalocker==2.6.0
     # via iopath
+protobuf==4.21.12
+    # via onnxruntime
+pycocotools==2.0.6
+    # via effdet
 pycparser==2.21
     # via cffi
 pydantic==1.10.2
     # via fastapi
 pygments==2.13.0
     # via nbconvert
+pyparsing==3.0.9
+    # via matplotlib
 pyrsistent==0.19.2
     # via jsonschema
+pytesseract==0.3.10
+    # via layoutparser
 python-dateutil==2.8.2
     # via
     #   jupyter-client
+    #   matplotlib
     #   pandas
 python-dotenv==0.21.0
     # via uvicorn
 python-multipart==0.0.5
-    # via unstructured-api-tools
+    # via
+    #   unstructured-api-tools
+    #   unstructured-inference
 pytz==2022.6
     # via pandas
 pyyaml==6.0
     # via
+    #   huggingface-hub
     #   layoutparser
+    #   omegaconf
+    #   timm
+    #   transformers
     #   uvicorn
 pyzmq==24.0.1
     # via jupyter-client
 ratelimit==2.2.1
     # via -r requirements/base.in
 regex==2022.10.31
-    # via nltk
+    # via
+    #   nltk
+    #   transformers
 requests==2.28.1
-    # via torchvision
+    # via
+    #   huggingface-hub
+    #   torchvision
+    #   transformers
 rfc3986[idna2008]==1.5.0
     # via httpx
 scipy==1.9.3
@@ -207,8 +284,14 @@ soupsieve==2.3.2.post1
     # via beautifulsoup4
 starlette==0.22.0
     # via fastapi
+sympy==1.11.1
+    # via onnxruntime
+timm==0.6.12
+    # via effdet
 tinycss2==1.2.1
     # via nbconvert
+tokenizers==0.13.2
+    # via transformers
 tomli==2.0.1
     # via
     #   build
@@ -217,15 +300,24 @@ tomli==2.0.1
 torch==1.13.1
     # via
     #   -r requirements/base.in
+    #   effdet
+    #   layoutparser
+    #   timm
     #   torchvision
 torchvision==0.14.1
-    # via -r requirements/base.in
+    # via
+    #   -r requirements/base.in
+    #   effdet
+    #   layoutparser
+    #   timm
 tornado==6.2
     # via jupyter-client
 tqdm==4.64.1
     # via
+    #   huggingface-hub
     #   iopath
     #   nltk
+    #   transformers
 traitlets==5.7.1
     # via
     #   jupyter-client
@@ -233,6 +325,8 @@ traitlets==5.7.1
     #   nbclient
     #   nbconvert
     #   nbformat
+transformers==4.26.1
+    # via unstructured-inference
 types-requests==2.28.11.5
     # via unstructured-api-tools
 types-ujson==5.6.0.0
@@ -241,20 +335,27 @@ types-urllib3==1.26.25.4
     # via types-requests
 typing-extensions==4.4.0
     # via
+    #   huggingface-hub
     #   limits
     #   mypy
     #   pydantic
     #   starlette
     #   torch
     #   torchvision
+typish==1.9.3
+    # via jsons
 unstructured==0.2.5
     # via -r requirements/base.in
 unstructured-api-tools==0.4.6
     # via -r requirements/base.in
+unstructured-inference==0.2.7
+    # via -r requirements/base.in
 urllib3==1.26.13
     # via requests
 uvicorn[standard]==0.20.0
-    # via unstructured-api-tools
+    # via
+    #   unstructured-api-tools
+    #   unstructured-inference
 uvloop==0.17.0
     # via uvicorn
 wand==0.6.10
