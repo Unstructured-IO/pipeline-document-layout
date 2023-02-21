@@ -80,7 +80,7 @@ docker-start-api:
 
 .PHONY: docker-start-jupyter
 docker-start-jupyter:
-	docker run -p 8888:8888 --mount type=bind,source=$(realpath .),target=/home/notebook-user/local -t --rm pipeline-${PIPELINE_FAMILY}-dev:latest python3 -m jupyter --port 8888 --ip 0.0.0.0 --no-browser --NotebookApp.token='' --NotebookApp.password=''
+	docker run -p 8888:8888 --mount type=bind,source=$(realpath .),target=/home/notebook-user/local -t --rm pipeline-${PIPELINE_FAMILY}-dev:latest jupyter-notebook --port 8888 --ip 0.0.0.0 --no-browser --NotebookApp.token='' --NotebookApp.password=''
 
 
 #########

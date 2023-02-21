@@ -27,7 +27,7 @@ RUN export PATH=/usr/local/bin:$PATH
 # create user with a home directory
 ENV USER ${NB_USER}
 ENV HOME /home/${NB_USER}
-ENV PATH $HOME/usr/local/bin/:$PATH
+ENV PATH $HOME/usr/local/bin/:/home/${NB_USER}/.local/bin:$PATH
 
 RUN groupadd --gid ${NB_UID} ${NB_USER}
 RUN useradd --uid ${NB_UID}  --gid ${NB_UID} ${NB_USER}
