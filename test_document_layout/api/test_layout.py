@@ -72,6 +72,7 @@ def test_multiple_files_type_content():
 
     response = client.post(
         LAYOUT_ROUTE,
+        headers={"Accept": "multipart/mixed"},
         files=[
             ("files", (filename, open(filename, "rb"), "image/png")),
             ("files", (filename, open(filename, "rb"), "image/png")),

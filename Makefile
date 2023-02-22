@@ -1,7 +1,7 @@
 PIPELINE_FAMILY := document-layout
 PIPELINE_PACKAGE := document_layout
 PACKAGE_NAME := prepline_${PIPELINE_PACKAGE}
-PIP_VERSION := 22.1.2
+PIP_VERSION := 22.2
 
 .PHONY: help
 help: Makefile
@@ -23,7 +23,6 @@ install: install-base install-test install-dev
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
 	python3 -m pip install pip==${PIP_VERSION}
-	python3 -m pip install pip-tools
 	pip install -r requirements/base.txt
 
 .PHONY: install-test
