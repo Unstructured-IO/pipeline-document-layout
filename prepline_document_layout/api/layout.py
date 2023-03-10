@@ -22,6 +22,7 @@ app = FastAPI()
 router = APIRouter()
 
 
+# pipeline-api
 ALL_ELEMS = "_ALL"
 VALID_FILETYPES = ["application/pdf", "image/png"]
 
