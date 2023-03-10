@@ -6,21 +6,14 @@
 
 from fastapi import FastAPI, Request, status
 
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.errors import RateLimitExceeded
-from slowapi.util import get_remote_address
-
 from .layout import router as layout_router
 
 
-limiter = Limiter(key_func=get_remote_address)
 app = FastAPI(
     title="Unstructured Pipeline API",
     description="""""",
     version="1.0.0",
 )
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.include_router(layout_router)
 

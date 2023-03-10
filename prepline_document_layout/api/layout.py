@@ -6,9 +6,6 @@
 import os
 from typing import List, Union
 from fastapi import status, FastAPI, File, Form, Request, UploadFile, APIRouter
-from slowapi.errors import RateLimitExceeded
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
 from fastapi.responses import PlainTextResponse
 import json
 from fastapi.responses import StreamingResponse
@@ -16,49 +13,51 @@ from starlette.types import Send
 from base64 import b64encode
 from typing import Optional, Mapping, Iterator, Tuple
 import secrets
-from layoutparser.models import Detectron2LayoutModel
-from PIL import Image
-from pdf2image import convert_from_bytes
+from unstructured_inference.inference.layout import process_data_with_model
+from unstructured_inference.models.base import UnknownModelException
+from fastapi import HTTPException
 
 
-limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 router = APIRouter()
 
-RATE_LIMIT = os.environ.get("PIPELINE_API_RATE_LIMIT", "1/second")
+
+ALL_ELEMS = "_ALL"
+VALID_FILETYPES = ["application/pdf", "image/png"]
 
 
-# pipeline-api
 def pipeline_api(
     file,
     file_content_type=None,
-    m_some_parameters=[],
+    m_model_type=[],
+    m_force_ocr=[],
+    m_include_elems=[],
 ):
+    if file_content_type not in VALID_FILETYPES:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
 
-    model = Detectron2LayoutModel(
-        config_path="lp://PubLayNet/faster_rcnn_R_50_FPN_3x/config",  # In model catalog
-        label_map={
-            0: "Text",
-            1: "Title",
-            2: "List",
-            3: "Table",
-            4: "Figure",
-        },  # In model`label_map`
-        extra_config=["MODEL.ROI_HEADS.SCORE_THRESH_TEST", 0.8],  # Optional
-    )
+    is_image = file_content_type == "image/png"
+    model = None if m_model_type == [] else m_model_type[0]
+    ocr_strategy = "force" if m_force_ocr else "auto"
+    try:
+        layout = process_data_with_model(
+            file, model, is_image, ocr_strategy=ocr_strategy
+        )  # type: ignore
+    except UnknownModelException as e:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(e))
+    pages_layout = [
+        {
+            "number": page.number,
+            "elements": [
+                element.to_dict()
+                for element in page.elements
+                if element.type in m_include_elems or m_include_elems == ALL_ELEMS
+            ],
+        }
+        for page in layout.pages
+    ]
 
-    if file_content_type == "image/png":
-        img = Image.open(file)
-        return model.detect(img).to_dict()
-    if file_content_type == "application/pdf":
-        pages = convert_from_bytes(file.read(), dpi=500)
-        results = []
-        for page in pages:
-            detections = model.detect(page).to_dict()
-            results.append(detections)
-        return results
+    return {"pages": pages_layout}
 
 
 class MultipartMixedResponse(StreamingResponse):
@@ -119,12 +118,13 @@ class MultipartMixedResponse(StreamingResponse):
         await send({"type": "http.response.body", "body": b"", "more_body": False})
 
 
-@router.post("/document-layout/v0.0.1/layout")
-@limiter.limit(RATE_LIMIT)
+@router.post("/document-layout/v1.0.0/layout")
 async def pipeline_1(
     request: Request,
     files: Union[List[UploadFile], None] = File(default=None),
-    some_parameters: List[str] = Form(default=[]),
+    model_type: List[str] = Form(default=[]),
+    force_ocr: List[str] = Form(default=[]),
+    include_elems: List[str] = Form(default=[]),
 ):
     content_type = request.headers.get("Accept")
 
@@ -150,7 +150,9 @@ async def pipeline_1(
 
                     response = pipeline_api(
                         _file,
-                        m_some_parameters=some_parameters,
+                        m_model_type=model_type,
+                        m_force_ocr=force_ocr,
+                        m_include_elems=include_elems,
                         file_content_type=file.content_type,
                     )
                     if is_multipart:
@@ -171,7 +173,9 @@ async def pipeline_1(
 
             response = pipeline_api(
                 _file,
-                m_some_parameters=some_parameters,
+                m_model_type=model_type,
+                m_force_ocr=force_ocr,
+                m_include_elems=include_elems,
                 file_content_type=file.content_type,
             )
 
