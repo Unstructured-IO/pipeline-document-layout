@@ -23,7 +23,6 @@ router = APIRouter()
 
 
 # pipeline-api
-ALL_ELEMS = "_ALL"
 VALID_FILETYPES = ["application/pdf", "image/png"]
 
 
@@ -32,7 +31,6 @@ def pipeline_api(
     file_content_type=None,
     m_model_type=[],
     m_force_ocr=[],
-    m_include_elems=[],
 ):
     if file_content_type not in VALID_FILETYPES:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
@@ -49,11 +47,7 @@ def pipeline_api(
     pages_layout = [
         {
             "number": page.number,
-            "elements": [
-                element.to_dict()
-                for element in page.elements
-                if element.type in m_include_elems or m_include_elems == ALL_ELEMS
-            ],
+            "elements": [element.to_dict() for element in page.elements],
         }
         for page in layout.pages
     ]
@@ -125,7 +119,6 @@ async def pipeline_1(
     files: Union[List[UploadFile], None] = File(default=None),
     model_type: List[str] = Form(default=[]),
     force_ocr: List[str] = Form(default=[]),
-    include_elems: List[str] = Form(default=[]),
 ):
     content_type = request.headers.get("Accept")
 
@@ -153,7 +146,6 @@ async def pipeline_1(
                         _file,
                         m_model_type=model_type,
                         m_force_ocr=force_ocr,
-                        m_include_elems=include_elems,
                         file_content_type=file.content_type,
                     )
                     if is_multipart:
@@ -176,7 +168,6 @@ async def pipeline_1(
                 _file,
                 m_model_type=model_type,
                 m_force_ocr=force_ocr,
-                m_include_elems=include_elems,
                 file_content_type=file.content_type,
             )
 
