@@ -26,7 +26,7 @@ LAYOUT_ROUTE = get_pipeline_path("layout", pipeline_family="document-layout", se
     ],
 )
 def test_with_invalid_values(file_type, headers, model_type, file, expected_response_code):
-    filename = f"../pipeline-document-layout/sample-docs/{file}"
+    filename = os.path.join(SAMPLE_DOCS_DIRECTORY, file)
     client = TestClient(app)
 
     response = client.post(
@@ -73,7 +73,7 @@ def test_without_file():
     ],
 )
 def test_files(file_type, model_type, file, expected_response_code):
-    filename = f"../pipeline-document-layout/sample-docs/{file}"
+    filename = os.path.join(SAMPLE_DOCS_DIRECTORY, file)
     client = TestClient(app)
 
     response = client.post(
@@ -104,7 +104,7 @@ def test_healtcheck():
     ],
 )
 def test_multiple_files(file_type, headers, file, expected_response_code):
-    filename = f"../pipeline-document-layout/sample-docs/{file}"
+    filename = os.path.join(SAMPLE_DOCS_DIRECTORY, file)
     client = TestClient(app)
 
     response = client.post(
