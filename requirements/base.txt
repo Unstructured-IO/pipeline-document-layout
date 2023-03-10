@@ -52,9 +52,7 @@ cycler==0.11.0
 defusedxml==0.7.1
     # via nbconvert
 deprecated==1.2.13
-    # via
-    #   argilla
-    #   limits
+    # via argilla
 effdet==0.3.0
     # via layoutparser
 entrypoints==0.4
@@ -100,7 +98,9 @@ idna==3.4
     #   requests
     #   rfc3986
 importlib-metadata==5.1.0
-    # via nbconvert
+    # via
+    #   markdown
+    #   nbconvert
 importlib-resources==5.10.1
     # via
     #   jsonschema
@@ -115,8 +115,6 @@ jinja2==3.1.2
     #   unstructured-api-tools
 joblib==1.2.0
     # via nltk
-jsons==1.6.3
-    # via unstructured-inference
 jsonschema==4.17.3
     # via nbformat
 jupyter-client==7.4.8
@@ -135,13 +133,13 @@ layoutparser[layoutmodels,tesseract]==0.3.4
     # via
     #   -r requirements/base.in
     #   unstructured-inference
-limits==2.7.2
-    # via slowapi
 lxml==4.9.1
     # via
     #   python-docx
     #   python-pptx
     #   unstructured
+markdown==3.4.1
+    # via unstructured
 markupsafe==2.1.1
     # via
     #   jinja2
@@ -198,7 +196,6 @@ packaging==22.0
     #   argilla
     #   build
     #   huggingface-hub
-    #   limits
     #   matplotlib
     #   nbconvert
     #   onnxruntime
@@ -307,8 +304,6 @@ six==1.16.0
     #   bleach
     #   python-dateutil
     #   python-multipart
-slowapi==0.1.7
-    # via unstructured-api-tools
 sniffio==1.3.0
     # via
     #   anyio
@@ -371,19 +366,16 @@ types-urllib3==1.26.25.4
 typing-extensions==4.4.0
     # via
     #   huggingface-hub
-    #   limits
     #   mypy
     #   pydantic
     #   starlette
     #   torch
     #   torchvision
-typish==1.9.3
-    # via jsons
-unstructured==0.4.11
+unstructured==0.5.3
     # via -r requirements/base.in
-unstructured-api-tools==0.4.9
+unstructured-api-tools==0.5.0
     # via -r requirements/base.in
-unstructured-inference==0.2.7
+unstructured-inference==0.2.11
     # via -r requirements/base.in
 urllib3==1.26.13
     # via requests
