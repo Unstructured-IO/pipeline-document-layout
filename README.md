@@ -36,7 +36,7 @@ Give a description of making API calls using example `curl` commands, and exampl
 For example:
 ```
 curl -X 'POST' \
-  'http://localhost:8000/document-layout/v0.0.1/layout' \
+  'http://localhost:8000/document-layout/v1.0.0/layout' \
   -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
   -F 'files=@sample-docs/example.png' | jq -C . | less -R
