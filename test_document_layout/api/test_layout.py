@@ -21,13 +21,13 @@ def test_healthcheck():
 def test_unknown_filetype():
     filename = "../pipeline-document-layout/sample-docs/example.pdf"
     client = TestClient(app)
-    
+
     response = client.post(
         LAYOUT_ROUTE,
         headers={"Accept": "multipart/mixed"},
         files=[
             ("files", (filename, open(filename, "rb"), "sometipe/pdf")),
-        ]
+        ],
     )
     assert response.status_code == 404
 
@@ -35,7 +35,7 @@ def test_unknown_filetype():
 def test_unknown_modeltype():
     filename = "../pipeline-document-layout/sample-docs/example.pdf"
     client = TestClient(app)
-    
+
     response = client.post(
         LAYOUT_ROUTE,
         headers={"Accept": "multipart/mixed"},
@@ -57,7 +57,7 @@ def test_non_acceptable_media_type():
         files=[
             ("files", (filename, open(filename, "rb"), "application/pdf")),
             ("files", (filename, open(filename, "rb"), "application/pdf")),
-        ]
+        ],
     )
     assert response.status_code == 406
 
@@ -92,7 +92,7 @@ def test_layout_multipage_pdf():
         headers={"Accept": "multipart/mixed"},
         files=[
             ("files", (filename, open(filename, "rb"), "application/pdf")),
-        ]
+        ],
     )
     assert response.status_code == 200
 
@@ -106,7 +106,7 @@ def test_layout_image():
         headers={"Accept": "multipart/mixed"},
         files=[
             ("files", (filename, open(filename, "rb"), "image/png")),
-        ]
+        ],
     )
     assert response.status_code == 200
 
@@ -128,7 +128,7 @@ def test_multiple_files_type_content():
         files=[
             ("files", (filename, open(filename, "rb"), "image/png")),
             ("files", (filename, open(filename, "rb"), "image/png")),
-        ]
+        ],
     )
     assert response.status_code == 200
 
@@ -142,6 +142,6 @@ def test_multiple_files_pdf():
         files=[
             ("files", (filename, open(filename, "rb"), "application/pdf")),
             ("files", (filename, open(filename, "rb"), "application/pdf")),
-        ]
+        ],
     )
     assert response.status_code == 200
