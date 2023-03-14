@@ -31,8 +31,6 @@ The API is hosted at `https://api.unstructured.io`.
 
 #### Extracting whatever from some type of document
 
-Give a description of making API calls using example `curl` commands, and example JSON responses.
-
 For example:
 ```
 curl -X 'POST' \
@@ -42,7 +40,9 @@ curl -X 'POST' \
   -F 'files=@sample-docs/example.png' -F 'model_type=yolox'| jq -C . | less -R
 ```
 
-It's also nice to show how to call the API function using pure Python.
+Where `files` includes the file to process, `model_type` can be 'default' (or blank) or 'yolox',
+also is possible to use `force_ocr` to auto in order to try text extraction from your file, or
+'true', in which case OCR will be used.
 
 ### Generating Python files from the pipeline notebooks
 
