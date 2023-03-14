@@ -39,7 +39,7 @@ curl -X 'POST' \
   'http://localhost:8000/document-layout/v1.0.0/layout' \
   -H 'accept: application/json' \
   -H 'Content-Type: multipart/form-data' \
-  -F 'files=@sample-docs/example.png' | jq -C . | less -R
+  -F 'files=@sample-docs/example.png' -F 'model_type=yolox'| jq -C . | less -R
 ```
 
 It's also nice to show how to call the API function using pure Python.
