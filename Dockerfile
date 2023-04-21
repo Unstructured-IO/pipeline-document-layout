@@ -35,8 +35,9 @@ COPY requirements/base.txt requirements-base.txt
 COPY prepline_document_layout prepline_document_layout
 COPY pipeline-notebooks pipeline-notebooks
 
-RUN python3 -m pip install --no-cache -r requirements-base.txt
-RUN python3 -m pip install --no-cache -r requirements-dev.txt 
+RUN python3.8 -m pip install pip==${PIP_VERSION} \
+  && pip3.8 install --no-cache -r requirements-base.txt \
+  && pip3.8 install --no-cache -r requirements-dev.txt 
 RUN python3 -m pip install ninja
 RUN pip install "detectron2@git+https://github.com/facebookresearch/detectron2.git@78d5b4f335005091fe0364ce4775d711ec93566e"
 EXPOSE 8000
