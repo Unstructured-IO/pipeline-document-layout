@@ -62,9 +62,9 @@ while getopts ":hcs:f:" opt; do
 done
 
 # Parse REPLACEMENT_FORMATS
-RE_SEMVER_FULL="(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-((0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(\+([0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*))?"
-RE_RELEASE="(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"
-RE_API_RELEASE="v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"
+RE_SEMVER_FULL="(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*)(\.(0|[1-9][0-9]*|[0-9]*[a-zA-Z-][0-9a-zA-Z-]*))*))?(\+([0-9a-zA-Z-]+(\.[0-9a-zA-Z-]+)*))?"
+RE_RELEASE="(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
+RE_API_RELEASE="v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
 # Pull out semver appearing earliest in SOURCE_FILE.
 LAST_VERSION=$(grep -o -m 1 -E "${RE_SEMVER_FULL}" "$SOURCE_FILE")
 LAST_RELEASE=$(grep -o -m 1 -E "${RE_RELEASE}($|[^-+])" "$SOURCE_FILE" | grep -o -m 1 -E "${RE_RELEASE}")
@@ -116,6 +116,16 @@ for i in "${!FILES_TO_CHECK[@]}"; do
     else
         # Replace semver in VERSIONFILE with semver obtained from SOURCE_FILE
         TMPFILE=$(mktemp /tmp/new_version.XXXXXX)
+        # Check sed version, exit if version < 4.3
+        if ! sed --version > /dev/null 2>&1; then
+            CURRENT_VERSION=1.archaic
+        else
+            CURRENT_VERSION=$(sed --version | head -n1 | cut -d" " -f4)
+        fi
+        REQUIRED_VERSION="4.3"
+        if [ "$(printf '%s\n' "$REQUIRED_VERSION" "$CURRENT_VERSION" | sort -V | head -n1)" != "$REQUIRED_VERSION" ]; then
+            echo "sed version must be >= ${REQUIRED_VERSION}" && exit 1
+        fi
         sed -E -r "s/$RE_SEMVER/$UPDATED_VERSION/" "$FILE_TO_CHANGE" > "$TMPFILE"
         if [ $CHECK == 1 ];
         then
